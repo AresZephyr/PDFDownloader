@@ -1,0 +1,43 @@
+# import libraries
+
+from bs4 import BeautifulSoup
+import urllib.request
+import os
+from urllib.request import Request, urlopen
+
+URL = "Enter the URL where the PDF files are stored."
+req = Request(URL, headers={'User-Agent': 'Mozilla/5.0'})
+
+page = urllib.request.urlopen(req)
+print(page)
+
+soup = BeautifulSoup(page, "html.parser")
+print(soup)
+
+for link in soup.findAll('a'):
+  theLink = link.get('href')
+  name= link.string
+
+  # Logic to find .pdf files
+ 
+  if theLink[-4:]  == ".pdf" or theLink[-4:] == ".pdf":
+    if theLink[-4:] ==".pdf":
+      fileExtension = ".pdf"
+      
+      if name is None:
+        title ="No Title" + fileExtension
+      else:
+        title = name + fileExtension
+
+  # Saving the file
+      try:
+        with open(os.getcwd()+"/documents/"+title, "r") as fileExists:
+          print(title + " exists")
+          fileExists.close()
+
+      except FileNotFoundError:
+        print("Download started: "+ title)
+        docFile = open(os.getcwd()+"/documents/"+title, "wb")
+        docFile.write(urllib.request.urlopen(URL).read())
+        docFile.close()
+        print("Success")
